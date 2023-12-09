@@ -3,10 +3,10 @@ Content-Type: application/json
 
 {
     "name": "Alex Júnior",
-    "bithDate": "1997-04-29",
+    "birthDate": "1997-04-29",
     "email": "alexjr.anp@gmail.com",
     "password": "12345789",
-    "gender": "Male" //Male | Female | 39 tipos de gay | Helicóptero Russo de combate
+    "gender": "Male"
 
 }
 ###
