@@ -1,12 +1,15 @@
 import express from "express";
 import cors from "cors";
 import routesV1 from "./routes/routesV1";
+import { exceptionHandler } from "./middlewares/exceptionHandler";
 //cors é uma função/classe que fica entre a requisição e a controller, "é o porteiro da aplicação"-middleware
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
+app.use(exceptionHandler);
+
 app.use((req, res, next) => {
   console.log(`[${req.method}] ${req.path}`);
   next();
@@ -26,7 +29,7 @@ app.get("/", (req, res) => {
     })
   );
 });
-
+app.use(exceptionHandler);
 app.use((req, res) => {
   res.status(404).json(
     JSON.stringify({

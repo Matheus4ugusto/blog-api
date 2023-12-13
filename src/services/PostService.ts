@@ -21,7 +21,7 @@ export class PostService {
   }
 
   async updatePost(id: string, post: UpdatePost): Promise<Post> {
-    return this.prisma.post.update({
+    return await this.prisma.post.update({
       data: post,
       where: {
         id,
@@ -30,22 +30,23 @@ export class PostService {
   }
 
   async getAll(): Promise<Post[]> {
-    return this.prisma.post.findMany();
+    return await this.prisma.post.findMany();
   }
 
   async getById(id: string): Promise<Post> {
-    const post = this.prisma.post.findFirst({
+    const post = await this.prisma.post.findFirst({
       where: { id: id },
     });
 
     if (post === null) {
       throw new NotFoundException("Post não foi encontrado");
     }
+    
 
     return post;
   }
   async deletePost(id: string): Promise<void> {
-    const post = this.getById(id);
+    const post = await this.getById(id);
     this.prisma.post.delete({
       where: {
         id,

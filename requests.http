@@ -2,11 +2,7 @@ POST http://127.0.0.1:3000/api/v1/users HTTP/1.1
 Content-Type: application/json
 
 {
-    "name": "Alex Júnior",
-    "birthDate": "1997-04-29",
-    "email": "alexjr.anp@gmail.com",
-    "password": "12345789",
-    "gender": "Male"
+
 }
 ###
 
