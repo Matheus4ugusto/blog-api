@@ -1,9 +1,8 @@
 import { Router } from "express";
+import { login } from "../../controllers/UserController";
 
 const authRoutes = Router();
-
-authRoutes.post("/login", (req, res) => {
-  res.send("Realiza Login.");
-});
+// TODO Criar método de login
+authRoutes.post("/login", login);
 
 export { authRoutes };

@@ -37,3 +37,5 @@ export const saveUser = async (
   const user: User = await userService.createUser(data);
   return response.status(201).json(user);
 };
+
+export const login = (req,res,next) => {}

@@ -1,5 +1,5 @@
 import { Post, PrismaClient } from "@prisma/client";
-import { NotFoundException } from "../exceptions/NotFoundExceptions";
+import { NotFoundException } from "../exceptions/NotFoundException";
 import { deletePost } from "./../controllers/postController";
 
 interface CreatePost extends Omit<Post, "id" | "createdAt" | "updatedAt"> {}
@@ -41,7 +41,6 @@ export class PostService {
     if (post === null) {
       throw new NotFoundException("Post não foi encontrado");
     }
-    
 
     return post;
   }
