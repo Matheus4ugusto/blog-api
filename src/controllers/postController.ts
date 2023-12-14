@@ -1,5 +1,5 @@
 import { PostService } from "./../services/PostService";
-import { Response, Request, response } from "express";
+import { Response, Request, response, NextFunction } from "express";
 
 const postService: PostService = new PostService();
 
@@ -42,3 +42,9 @@ export const deletePost = async (
   await postService.deletePost(request.params.id);
   return response.status(204).json();
 };
+
+export const uploadMedia = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+) => {};

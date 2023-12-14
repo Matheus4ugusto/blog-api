@@ -1,6 +1,9 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/UserService";
 import { User } from "@prisma/client";
+import { PasswordEncoder } from "../services/PasswordEncoder";
+import { UnauthorizedException } from "../exceptions/UnauthorizedException";
+import { NotFoundException } from "../exceptions/NotFoundException";
 
 const userService: UserService = new UserService();
 export const getUsers = async (
@@ -13,12 +16,17 @@ export const getUsers = async (
 
 export const getUser = async (
   request: Request,
-  response: Response
-): Promise<Response> => {
+  response: Response,
+  next: NextFunction
+): Promise<Response | void> => {
   const id: string = request.params.id;
-  const user: User = await userService.getUserById(id);
+  try {
+    const user: User = await userService.getUserById(id);
 
-  return response.status(200).json(user);
+    return response.status(200).json(user);
+  } catch (error: any) {
+    next(error);
+  }
 };
 
 export const saveUser = async (
@@ -38,4 +46,36 @@ export const saveUser = async (
   return response.status(201).json(user);
 };
 
-export const login = (req,res,next) => {}
+export const login = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+) => {
+  const passwordEncoder: PasswordEncoder = new PasswordEncoder();
+
+  const { email, password } = request.body;
+
+  try {
+    const user = await userService.getUserByEmail(email);
+
+    const isPasswordValid = await passwordEncoder.matches(
+      password,
+      user.password
+    );
+
+    if (isPasswordValid) {
+      return response.status(200).json({
+        type: "Bearer",
+        token: userService.signToken(user),
+      });
+    }
+
+    next(new UnauthorizedException("Usuário e/sou senha inválidos"));
+  } catch (error: any) {
+    if (error instanceof NotFoundException) {
+      next(new UnauthorizedException("Usuário e/sou senha inválidos"));
+    }
+
+    next(error);
+  }
+};
