@@ -8,10 +8,20 @@ export const apiAuth = async (
   next: NextFunction
 ) => {
   const authorizarion = request.headers.authorization;
-  if (authorizarion == null || !authorizarion.startsWith("Bearer")) {
+
+  if (authorizarion == null || typeof authorizarion == "undefined") {
+    next(new UnauthorizedException("Acesso não autorizado!"));
+  }
+  const headerArray = authorizarion.split(" ");
+  if (headerArray[0] != "Bearer") {
+    next(new UnauthorizedException("Acesso não autorizado!"));
+  }
+
+  const token = headerArray[1];
+
+  if (!token) {
     next(new UnauthorizedException("Acesso não autorizado"));
   }
-  const token = authorizarion?.split(" ")[1];
 
   try {
     const userService: UserService = new UserService();
@@ -19,7 +29,7 @@ export const apiAuth = async (
     const user = userService.getUserByEmail(email);
     request.user = user;
     next();
-  } catch (error) {
-    next(error);
+  } catch (error: any) {
+    next(new UnauthorizedException(error.message));
   }
 };

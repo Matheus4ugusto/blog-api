@@ -9,6 +9,7 @@ export const exceptionHandler = (
   if (typeof error === "undefined" || error === null) {
     next();
   }
+  console.log(error);
 
   if (!(error instanceof HttpError)) {
     return response.status(500).json({
