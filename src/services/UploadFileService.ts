@@ -1,6 +1,5 @@
 import { randomUUID } from "crypto";
 import fs from "fs";
-import { fileTypeFromBuffer } from "file-type";
 
 interface UploadResponse {
   filename: string;
@@ -15,21 +14,19 @@ export const uploadMedia = async (
   const base64File = file.split(",")[1];
   const buffer = Buffer.from(base64File, "base64");
   const filename = name || randomUUID();
-  const { ext } = await getMimeType(buffer);
+  const ext = getMimeType(file.split(",")[0]);
   const filePath = path ? `public/storage${path.join("/")}` : "public/storage";
+
+  fs.mkdirSync(filePath, { recursive: true });
   fs.writeFileSync(`${filePath}/${filename}.${ext}`, buffer);
 
   return {
-    filename,
+    filename: `${filename}.${ext}`,
     filePath,
   };
 };
 
-export const getMimeType = async (file: Buffer): Promise<any> => {
-  const { fileTypeFromBuffer } = await import("file-type");
-  const mimeResult = await fileTypeFromBuffer(file);
-  if (!mimeResult) {
-    throw new Error("Falha ao ler buffer");
-  }
-  return mimeResult;
+export const getMimeType = (dataUrl: string): string => {
+  const dataPart = dataUrl.split(";")[0];
+  return dataPart.split("/")[1];
 };

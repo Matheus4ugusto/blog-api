@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { UnauthorizedException } from "../exceptions/UnauthorizedException";
 import { UserService } from "./../services/UserService";
+import { verifyToken } from "../utils/verifyToken";
 
 export const apiAuth = async (
   request: any,
@@ -12,6 +13,7 @@ export const apiAuth = async (
   if (authorizarion == null || typeof authorizarion == "undefined") {
     next(new UnauthorizedException("Acesso não autorizado!"));
   }
+
   const headerArray = authorizarion.split(" ");
   if (headerArray[0] != "Bearer") {
     next(new UnauthorizedException("Acesso não autorizado!"));
@@ -25,7 +27,7 @@ export const apiAuth = async (
 
   try {
     const userService: UserService = new UserService();
-    const { email } = userService.verifyToken(token as string);
+    const { email } = verifyToken(token as string);
     const user = userService.getUserByEmail(email);
     request.user = user;
     next();

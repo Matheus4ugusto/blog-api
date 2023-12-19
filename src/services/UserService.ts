@@ -6,13 +6,6 @@ import { randomUUID } from "crypto";
 
 interface StoreUser extends Omit<User, "id" | "createdAt" | "updatedAt"> {}
 interface UpdateUser extends Partial<User> {}
-interface PayloadJwt {
-  iat: number;
-  jti: string;
-  sub: string;
-  email: string;
-  exp: number;
-}
 
 export class UserService {
   private readonly PasswordEncoder: PasswordEncoder;
@@ -92,9 +85,5 @@ export class UserService {
         expiresIn: `${process.env.JWT_EXPIRATION}h`,
       }
     );
-  }
-
-  verifyToken(token: string): PayloadJwt {
-    return jwt.verify(token, process.env.JWT_SECRET as string) as PayloadJwt;
   }
 }

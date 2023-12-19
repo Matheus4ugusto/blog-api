@@ -3,6 +3,7 @@ import { Response, Request, response, NextFunction } from "express";
 import { MediaService } from "../services/MediaService";
 import { uploadMedia } from "../services/UploadFileService";
 import { Post } from "@prisma/client";
+import { verifyToken } from "../utils/verifyToken";
 
 const postService: PostService = new PostService();
 const mediaService: MediaService = new MediaService();
@@ -20,14 +21,17 @@ const upload = async (images: string[], post: Post) => {
 };
 
 export const createPost = async (
-  request: Request,
+  request: any,
   response: Response,
   next: NextFunction
 ): Promise<Response | undefined> => {
   const postImages = request.body.images;
   delete request.body.images;
   try {
-    const post = await postService.createPost(request.body);
+    const { sub } = verifyToken(request.headers.authorization.split(" ")[1]);
+    const postPayload = request.body;
+    postPayload.authorId = sub;
+    const post = await postService.createPost(postPayload);
 
     if (postImages && postImages.length > 0) {
       await upload(postImages, post);

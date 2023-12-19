@@ -30,7 +30,11 @@ export class PostService {
   }
 
   async getAll(): Promise<Post[]> {
-    return await this.prisma.post.findMany();
+    return await this.prisma.post.findMany({
+      include: {
+        author: true,
+      },
+    });
   }
 
   async getById(id: string): Promise<Post> {

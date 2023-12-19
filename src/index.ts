@@ -5,7 +5,7 @@ import { exceptionHandler } from "./middlewares/exceptionHandler";
 //cors é uma função/classe que fica entre a requisição e a controller, "é o porteiro da aplicação"-middleware
 const app = express();
 
-app.use(express.json());
+app.use(express.json({limit: "50MB"}));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(exceptionHandler);
